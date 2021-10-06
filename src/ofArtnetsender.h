@@ -42,6 +42,7 @@ public:
     void artnetEffectRunningUp_Down(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
     void artnetEffectMathDown(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
     void artnetEffectFlash(int& _xpos, int& _lenght, int effectS, int effectI);
+	void artnetEffectFlashInverted(int& _xpos, int& _lenght, int effectS, int effectI,ofColor& _col);
     void artnetEffectRandomSparkle(int& _xpos, int& _lenght, int effectS, int effectI);
     void artnetEffectBlackout(ofColor& _col);
 
@@ -52,6 +53,7 @@ public:
     int artnetFMOD(int max);
     int fm;
     int sw;
+	int artnetPerlinNoise(int max);
 
 
 };

@@ -48,6 +48,10 @@ void ArtnetSender::artnetUpdate(ofColor _color, int _pos, int length, int _effec
 	case 5:
 		artnetEffectSimpleSine(universePos, universeLenght, _effectS, _effectI,universeColor);
 		break;
+
+	case 6:
+		artnetEffectFlashInverted(universePos, universeLenght, _effectS, _effectI, universeColor);
+		break;
 	default:
 		artnetEffectSolid(universePos, universeLenght);
 	}
@@ -64,9 +68,6 @@ void ArtnetSender::artnetUpdate(ofColor _color, int _pos, int length, int _effec
     ofPopStyle();
 }
 
-
-
-
 void ArtnetSender::artnetDraw(int _xpos, int _ypos)
 
 {
@@ -82,16 +83,13 @@ void ArtnetSender::artnetDraw(int _xpos, int _ypos)
 	paddingBottom += 20;
 	ofDrawBitmapString("cur. Length: " + ofToString(universeLenght), _xpos, paddingBottom);
 	paddingBottom += 20;
-
-
 	ofPushMatrix();
 	ofTranslate(_xpos+80, paddingBottom, 0);
 	ofRotateZDeg(90);  
     ofSetColor(universeColor);		
 	ofRectangle rRect= ofRectangle(0, 0, 100, 80);
 	ofScale(10, 1, 1.0F);
-	sendData.draw(rRect);
-	
+	sendData.draw(rRect);	
 	ofPopMatrix();
 	ofPopStyle();
 
@@ -99,20 +97,17 @@ void ArtnetSender::artnetDraw(int _xpos, int _ypos)
 
 void ArtnetSender::artnetEffectSolid(int & _xpos, int & _lenght)
 {
-
+	
 }
 
 
 
 void ArtnetSender::artnetEffectRunningUp_Down(int & _xpos, int & _lenght, int _effectS, int _effectI,ofColor& _col)
 {
-
 	cycleLimiter = _lenght;
 	int tTriggerT = _effectS * 0.1f;
-
 	_xpos = artnetTimer(tTriggerT, _lenght, true);
-	_lenght = _effectI / round(_effectI/8);
-	
+	_lenght = _effectI / round(_effectI/8);	
 
 }
 
@@ -124,6 +119,7 @@ void ArtnetSender::artnetEffectMathDown(int & _xpos, int & _lenght, int _effectS
 		int tPos;
 		
 		int t = artnetTimer(_effectS / 2, 5, true);
+		//int t = (_effectS / 255) * 100;
 
 		switch (t)
 		{
@@ -136,7 +132,7 @@ void ArtnetSender::artnetEffectMathDown(int & _xpos, int & _lenght, int _effectS
 			col = ofColor(ofColor::aliceBlue);
 			tPos = round(tLength*0.6);
 			cuLen = round(tLength*0.2);
-				break;
+			break;
 
 		case 3:
 			col = ofColor(ofColor::beige);
@@ -165,11 +161,10 @@ void ArtnetSender::artnetEffectFlash(int & _xpos, int & _lenght, int effectS, in
 {
 	int cuLen = 0;
 	cycleLimiter = round(effectI/10);
-	triggerTime = effectS*2+20;
+	
+	triggerTime = ofMap(effectS, 0, 255, 0, 255);
 
-
-	//int t = artnetTimer(effectS * 2 + 20, round(effectI / 10), true);
-	//cuLen = t;
+	
 
 	if (cyclePosition <= cycleLimiter) {
 		timer = ofGetElapsedTimeMillis() - startTime;
@@ -189,13 +184,43 @@ void ArtnetSender::artnetEffectFlash(int & _xpos, int & _lenght, int effectS, in
 	_xpos = 0;
 }
 
+
+void ArtnetSender::artnetEffectFlashInverted(int & _xpos, int & _lenght, int effectS, int effectI, ofColor & _col)
+{
+	int cuLen = 0;
+	cycleLimiter = round(effectI / 10);
+
+	triggerTime = ofMap(effectS, 0, 255, 0, 255);
+	ofColor c = _col;
+
+	if (cyclePosition <= cycleLimiter) {
+		timer = ofGetElapsedTimeMillis() - startTime;
+		if (timer >= triggerTime) {
+			cyclePosition++;
+			startTime = ofGetElapsedTimeMillis();
+			cuLen = _lenght;
+			_col = c;
+		}
+	}
+	else
+	{
+		cyclePosition = 0;
+		cuLen = _lenght;
+		_col = c.invert();
+	}
+
+	_lenght = cuLen;
+	_xpos = 0;
+}
+
 void ArtnetSender::artnetEffectRandomSparkle(int & _xpos, int & _lenght, int effectS, int effectI)
 {
-		int rand = round(ofRandom(_lenght));
+		
+		int rand = (int)(ofRandom(_lenght)); 
 		if (artnetTimer(round(effectS*3), 10, true) % 2 == 0)
 		{
-			_lenght = 1;
-			_xpos = rand ;
+			_lenght = ofMap(effectI, 1, 255, 1, totalChannels);
+			_xpos = rand;
 		}
 		else
 		{
@@ -212,8 +237,16 @@ void ArtnetSender::artnetEffectBlackout(ofColor & col)
 
 void ArtnetSender::artnetEffectSimpleSine(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col)
 {
-	_lenght = 1;
-	_xpos = artnetSineW(0,60,true);
+	//int len = ofMap(effectI, 1, 255, 1, totalChannels);
+	ofColor colr = _col;
+	_lenght = totalChannels;
+	_xpos = 0;
+
+	//_xpos = artnetPerlinNoise(_lenght);
+	
+	_col.r = artnetSineW(0, colr.r,true);
+	_col.g = artnetSineW(0, colr.g, true);
+	_col.b = artnetSineW(0, colr.b, true);
 }
 
 int ArtnetSender::artnetTimer(int _triggerTime,int limit,bool consoleTimer)
@@ -239,7 +272,7 @@ int ArtnetSender::artnetTimer(int _triggerTime,int limit,bool consoleTimer)
 
 int ArtnetSender::artnetSineW(int min,int max, bool k)
 {
-	sw = ofMap(sin(ofGetElapsedTimef()), -1, 1, min, max);
+	sw = ofMap(sin(ofGetElapsedTimef()), -1, 1, (float)min, (float)max,false);
 	if (k)
 	cout << sw << endl;
 	return sw;
@@ -251,3 +284,16 @@ int ArtnetSender::artnetFMOD(int max)
 	cout << fm << endl;
 	return fm;
 }
+
+int ArtnetSender::artnetPerlinNoise(int max)
+{
+	
+	float x=ofNoise(ofRandom(1));
+	 float calc = max *x;
+	 int s = calc;
+	cout << calc << endl;
+	return calc;
+}
+
+
+

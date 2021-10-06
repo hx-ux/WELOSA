@@ -42,9 +42,11 @@ class ofApp : public ofBaseApp{
 	   //ofParameterGroup saveTF;
 	   //ofxPanel save;
 
-
-
         //->GUI
+		ofParameterGroup frameRateSetup;
+		ofParameter <bool> parVsync;
+		ofParameter <float> parFrameRate;
+
 		ofParameterGroup parameters;
         ofParameter <float> colorR;
         ofParameter<float> colorG;
@@ -64,28 +66,27 @@ class ofApp : public ofBaseApp{
 			
 		ofTrueTypeFont font;
 		
-
 		ofParameter<string> effectDesc;
 		float currEffectIndex = 0;
 		void effectIndexChanged(float&);
 		//
-		static const unsigned int effectPresetsLenght = 6;
-		string effectPresetsNames[effectPresetsLenght] = {"Solid","Math","Triangle","Strobo","Random Sparkle","Simple Sinewave"};
+		static const unsigned int effectPresetsLenght = 7;
+		string effectPresetsNames[effectPresetsLenght] = {"Solid","Math","Triangle","Strobo","Random Sparkle","Simple Sinewave","Flash Inverted"};
 		//
 		ofParameter<ofColor> color;
 		ofxPanel mainControls;
         //<-GUI
 
-
         //->Artnet
-        std::vector<std::string> _name;
-        std::vector<std::string>  _ip;
-        vector<int> _length;
+        std::vector<std::string> nodesDesc;
+        std::vector<std::string>  nodesIP;
+        vector<int> nodesMaxLen;
 		ofColor currCol;
         bool foundNodes;
         //<-Artnet
 
         //Read CSV
+		const string csvPath = "nodes.csv";
         ofxCsv csv;
         unsigned int csvRows;
         //Read CSV	
@@ -100,6 +101,20 @@ class ofApp : public ofBaseApp{
 		ofFile file;
 		bool checkFilePropOpen(ofFileDialogResult  f);
 		bool checkFilePropSave(ofFileDialogResult  f);
+
+		//-->Framerate
+		string getFrameRate();
+		//-->show presets saved as .xml
+		void scanXMLPresets();
+		void drawXMLPresets();
+		void setXMLPreset(int key);
+		int currentXMLPreset;
+		bool foundXMLFiles = false;
+		bool isXMLSelected = false;
+
+		vector<ArtnetSender> artnetNodes;
+		vector<string> xmlPresetList;
+	
 
 private:
 	
