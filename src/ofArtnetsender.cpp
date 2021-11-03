@@ -1,5 +1,5 @@
 #include "ofArtnetsender.h"
-
+int tempIndex = 99;
 
 ArtnetSender::ArtnetSender()
 {
@@ -8,11 +8,12 @@ ArtnetSender::ArtnetSender()
 
 void ArtnetSender::artnetSetup(string _ip, short _fps,short _totalChannels,string _name)
 {
-startTime = ofGetElapsedTimeMillis();;
-cyclePosition = 0;
-  sendData.allocate(170, 1, GL_RGB);
+  startTime = ofGetElapsedTimeMillis();;
+  cyclePosition = 0;
+  //allocate only, what u need (_totalChannles)
+  sendData.allocate(_totalChannels, 1, GL_RGB);
   //standart artnet port, please refer to readme
-  artnet.setup(_ip,6454);
+  artnet.setup(_ip,6454);  
   deviceIP=_ip;  
   deviceDesc=_name;
   totalChannels=_totalChannels;
@@ -21,10 +22,19 @@ cyclePosition = 0;
 
 void ArtnetSender::artnetUpdate(ofColor _color, int _pos, int length, int _effectS, int _effectI, int effectIndex)
 {
+
+	tempIndex = effectIndex;
+
+	if (effectIndex != tempIndex)
+	{
+		artnetClearBuffer();
+		tempIndex = effectIndex;
+	}
+
     universePos=_pos;
     universeLenght= totalChannels;
     universeColor=_color;
-
+	
 	switch (effectIndex) {
 	case 0:
 		artnetEffectSolid(universePos, universeLenght);
@@ -95,9 +105,14 @@ void ArtnetSender::artnetDraw(int _xpos, int _ypos)
 
 }
 
+void ArtnetSender::artnetClearBuffer()
+{
+	sendData.clear();	
+}
+
 void ArtnetSender::artnetEffectSolid(int & _xpos, int & _lenght)
 {
-	
+	//do nothing :)
 }
 
 
@@ -161,10 +176,8 @@ void ArtnetSender::artnetEffectFlash(int & _xpos, int & _lenght, int effectS, in
 {
 	int cuLen = 0;
 	cycleLimiter = round(effectI/10);
-	
 	triggerTime = ofMap(effectS, 0, 255, 0, 255);
 
-	
 
 	if (cyclePosition <= cycleLimiter) {
 		timer = ofGetElapsedTimeMillis() - startTime;
@@ -215,7 +228,6 @@ void ArtnetSender::artnetEffectFlashInverted(int & _xpos, int & _lenght, int eff
 
 void ArtnetSender::artnetEffectRandomSparkle(int & _xpos, int & _lenght, int effectS, int effectI)
 {
-		
 		int rand = (int)(ofRandom(_lenght)); 
 		if (artnetTimer(round(effectS*3), 10, true) % 2 == 0)
 		{
@@ -227,7 +239,6 @@ void ArtnetSender::artnetEffectRandomSparkle(int & _xpos, int & _lenght, int eff
 			_lenght = 0;
 			_xpos = 0;
 		}
-
 }
 
 void ArtnetSender::artnetEffectBlackout(ofColor & col)

@@ -24,6 +24,8 @@ public:
     void artnetSetup(string _ip,short _fps,short _totalChannels,string _name);
     void artnetUpdate(ofColor _color,int _pos,int length, int effectS, int effectI, int effectIndex);
     void artnetDraw(int _xpos, int _ypos );
+	void artnetClearBuffer();
+	void artnetSenderDestroy();
 	//-->Effect Modifier
 
 

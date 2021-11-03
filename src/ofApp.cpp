@@ -23,8 +23,6 @@ void ofApp::setup(){
 
 scanXMLPresets();
 ofSetLogLevel(OF_LOG_NOTICE);
-//ofSetLogLevel(OF_LOG_FATAL_ERROR);
-
 
 if(csv.load(ofToDataPath(csvPath)))
 {
@@ -49,15 +47,11 @@ for(int i = 0; i < csvRows; i++)
 
 	ofSetFrameRate(GLOBALFRAMERATE);
 	ofSetVerticalSync(ENABLE_VSYNC);
-	ofEnableAntiAliasing();
-	
-	ofBackground(ofColor::black);   
-		
+	ofEnableAntiAliasing();	
+	ofBackground(ofColor::black);   		
 	//do not change the name, its a part of the osc message
 	parameters.setName("parameters");
-	mainControls.setHeaderBackgroundColor(ofColor::black);
-	
-	
+	mainControls.setHeaderBackgroundColor(ofColor::black);	
 	//Experimental:: choose the begin and end of your universe 
 
 	/*parameters.add(parLenStart);
@@ -236,7 +230,7 @@ void ofApp::scanXMLPresets()
 	{
 		foundXMLFiles = true;
 		for (int i = 0; i < ndir.size(); i++) {
-			if (ndir.getName(i) != "settings.xml")
+			if ((ndir.getName(i) != "settings.xml")|| (ndir.getName(i) != "analyzer.xml"))
 			{
 				xmlPresetList.push_back(ndir.getPath(i));				
 			}
@@ -298,7 +292,7 @@ void ofApp::keyPressed(int key)
 
 	if (key == OF_KEY_RIGHT) 
 	{
-		currEffectIndex = currEffectIndex + 1;
+		currEffectIndex++;
 		effectIndexChanged(currEffectIndex);
 		isXMLSelected = false;
 		
@@ -307,7 +301,7 @@ void ofApp::keyPressed(int key)
 	if (key == OF_KEY_LEFT)
 	{
 		if (currEffectIndex != 0)
-		{	currEffectIndex = currEffectIndex - 1;
+		{	currEffectIndex --;
 			effectIndexChanged(currEffectIndex);
 		}
 		else
@@ -397,7 +391,6 @@ void ofApp::keyPressed(int key)
 		setXMLPreset(8);
 	}
 
-	
 }
 
 //--------------------------------------------------------------
