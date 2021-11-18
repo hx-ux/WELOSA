@@ -42,10 +42,7 @@ class ofApp : public ofBaseApp{
 	   //ofParameterGroup saveTF;
 	   //ofxPanel save;
 
-        //->GUI
-		ofParameterGroup frameRateSetup;
-		ofParameter <bool> parVsync;
-		ofParameter <float> parFrameRate;
+        //->GUI	
 
 		ofParameterGroup parameters;
         ofParameter <float> colorR;
@@ -71,9 +68,10 @@ class ofApp : public ofBaseApp{
 		void effectIndexChanged(float&);
 		//
 		static const unsigned int effectPresetsLenght = 7;
-		string effectPresetsNames[effectPresetsLenght] = {"Solid","Math","Triangle","Strobo","Random Sparkle","Simple Sinewave","Flash Inverted"};
+		string effectPresetsNames[effectPresetsLenght] = {"Solid","RunUP::DOWN","Unfolding","Flash Black","Random Sparkle","Sinewave","Flash Inverted"};
 		//
-		ofParameter<ofColor> color;
+		ofParameter<ofColor> colorPicker;
+
 		ofxPanel mainControls;
         //<-GUI
 
@@ -106,7 +104,7 @@ class ofApp : public ofBaseApp{
 		string getFrameRate();
 		//-->show presets saved as .xml
 		void scanXMLPresets();
-		void drawXMLPresets();
+		void XMLPresetsDraw();
 		void setXMLPreset(int key);
 		int currentXMLPreset;
 		bool foundXMLFiles = false;

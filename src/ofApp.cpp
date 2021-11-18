@@ -2,6 +2,7 @@
 WINDOWS BRANCH 
 TODO !!!
 + the lenght is given twice to the class
++ Fix OFLog
 */
 #include "ofApp.h"
 //GENERAL
@@ -16,6 +17,10 @@ TODO !!!
 #define OSC_OUT_PORT 6667
 #define OSC_IP "localhost"
 
+//SLIDER --> 4 sliders with r,g,b,alpha, has OSC SUPPORT !
+//#define COLOR_CONTROLL_SLIDER 
+//PICKER --> Color Picker, has no OSC SUPPORT
+#define COLOR_CONTROLL_PICKER
 
 
 //--------------------------------------------------------------
@@ -29,7 +34,7 @@ if(csv.load(ofToDataPath(csvPath)))
 foundNodes=true;
 csvRows=csv.getNumRows();
 artnetNodes.resize(csvRows);
-ofLogNotice("CSV-File found with "+ofToString(csvRows)+"nodes!");
+//ofLogNotice("CSV-File found with "+ofToString(csvRows)+"nodes!");
 
 for(int i = 0; i < csvRows; i++) 
 {
@@ -42,7 +47,7 @@ for(int i = 0; i < csvRows; i++)
 }
  else
 {
-	ofLogNotice( "File not found ");
+	//ofLogNotice( "File not found ");
 }
 
 	ofSetFrameRate(GLOBALFRAMERATE);
@@ -62,21 +67,22 @@ for(int i = 0; i < csvRows; i++)
 	channelLength.setParent(parLenStart);
 	*/
 
+	parameters.add(parColors);		
+	parColors.setName("Color Control");	
 
-	parameters.add(parColors);	
+#if defined(COLOR_CONTROLL_SLIDER)
 	colorR.setParent(parColors);
-	parColors.setName("Color Control");
 	parameters.add(colorR.set("colorR", 255, 0, 255));
-
 	parameters.add(colorG.set("colorG",0,0,255));
 	colorG.setParent(parColors);
 	parameters.add(colorB.set("colorB",0,0,255));
 	colorB.setParent(parColors);
 	parameters.add(colorA.set("colorA",255,0,255));
 	colorA.setParent(parColors);
-
-	//alternative color controll, no osc support yet
-	//parameters.add(color.set("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255)));
+#elif defined (COLOR_CONTROLL_PICKER)
+	parameters.add(colorPicker.set("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255)));
+	
+#endif
 
 	parameters.add(parEffects);
 	parEffects.setName("Effect Controls");
@@ -119,13 +125,15 @@ void ofApp::update(){
 	ofSetWindowTitle(PROJECT_NAME " " "FPS:"+getFrameRate());
 	sync.update();
 
-	//alternative color controll, no osc support yet
-	//currCol = color;	
 	//casting of color :: optional, but does improves speed, adds smoothing
+#if defined(COLOR_CONTROLL_SLIDER)
 	currCol.r = (int)colorR;
 	currCol.g = (int)colorG;
 	currCol.b = (int)colorB;
 	currCol.a = (int)colorA;
+#elif defined (COLOR_CONTROLL_PICKER)
+	currCol = colorPicker;
+#endif
 
 		if (foundNodes)
 		{
@@ -139,9 +147,10 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	drawXMLPresets();
-
+	
+	XMLPresetsDraw();
 	mainControls.draw();
+
 	if (foundNodes)
 	{
 	for (int i=0;i<csvRows;i++)
@@ -181,11 +190,11 @@ void ofApp::showHints()
 {	
 	ofPushStyle();
 	ofSetColor(ofColor::green);		
-		ofDrawBitmapString("Show Session Information :: i ", 10, 320);
-		ofDrawBitmapString("Save Presets (.xml) file :: s ", 10, 340);
-		ofDrawBitmapString("Load Presets (.xml) file :: o ", 10, 360);
-		ofDrawBitmapString("Toogle between Effects :: <- and ->", 10, 380);
-		ofDrawBitmapString("PANIC BUTTON :: ESC ", 10, 400);
+		ofDrawBitmapString("Show Session Information :: i ", 10, 420);
+		ofDrawBitmapString("Save Presets (.xml) file :: s ", 10, 440);
+		ofDrawBitmapString("Load Presets (.xml) file :: o ", 10, 460);
+		ofDrawBitmapString("Toogle between Effects :: <- and ->", 10, 480);
+		ofDrawBitmapString("PANIC BUTTON :: ESC ", 10, 500);
 		ofPopStyle();
 }
 
@@ -230,6 +239,7 @@ void ofApp::scanXMLPresets()
 	{
 		foundXMLFiles = true;
 		for (int i = 0; i < ndir.size(); i++) {
+			//second stament doenst work
 			if ((ndir.getName(i) != "settings.xml")|| (ndir.getName(i) != "analyzer.xml"))
 			{
 				xmlPresetList.push_back(ndir.getPath(i));				
@@ -238,7 +248,7 @@ void ofApp::scanXMLPresets()
 	}
 }
 
-void ofApp::drawXMLPresets()
+void ofApp::XMLPresetsDraw()
 {	
 
 	if (foundXMLFiles)

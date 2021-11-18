@@ -25,10 +25,8 @@ public:
     void artnetUpdate(ofColor _color,int _pos,int length, int effectS, int effectI, int effectIndex);
     void artnetDraw(int _xpos, int _ypos );
 	void artnetClearBuffer();
-	void artnetSenderDestroy();
+
 	//-->Effect Modifier
-
-
     string deviceDesc;
 
     private:
@@ -40,19 +38,19 @@ public:
 	int triggerTime;
 
 
-    void artnetEffectSolid(int& _xpos, int& _lenght);
-    void artnetEffectRunningUp_Down(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
-    void artnetEffectMathDown(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
-    void artnetEffectFlash(int& _xpos, int& _lenght, int effectS, int effectI);
-	void artnetEffectFlashInverted(int& _xpos, int& _lenght, int effectS, int effectI,ofColor& _col);
-    void artnetEffectRandomSparkle(int& _xpos, int& _lenght, int effectS, int effectI);
-    void artnetEffectBlackout(ofColor& _col);
+    void EffectSolid(int& _xpos, int& _lenght);
+    void RunningUp_Down(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
+    void EffectMathDown(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
+    void EffectFlash(int& _xpos, int& _lenght, int effectS, int effectI);
+	void EffectFlashInverted(int& _xpos, int& _lenght, int effectS, int effectI,ofColor& _col);
+    void EffectRandomSparkle(int& _xpos, int& _lenght, int effectS, int effectI);
+    void EffectBlackout(ofColor& _col);
 
-    void artnetEffectSimpleSine(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
+    void EffectSimpleSine(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
 
-    int artnetTimer(int triggerTime,int cycleLimiter,bool consoleTimer);
-    int artnetSineW(int sMin,int sinMax,bool consoleTimer);
-    int artnetFMOD(int max);
+    int CreateTimer(int triggerTime,int cycleLimiter,bool consoleTimer);
+    int CreateSineWave(int sMin,int sinMax,bool consoleTimer);
+    int CreateFMOD(int max);
     int fm;
     int sw;
 	int artnetPerlinNoise(int max);
