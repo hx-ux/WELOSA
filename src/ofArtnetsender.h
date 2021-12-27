@@ -12,7 +12,7 @@ public:
     string devicesubnet;
     short  totalChannels;
     short frameRate;
-
+    int tempIndex;
 
     ofFbo sendData;
     ofxArtnetSender artnet;
@@ -21,7 +21,7 @@ public:
     ofColor universeColor;
     ofPixels payloadData;
 
-    void artnetSetup(string _ip,short _fps,short _totalChannels,string _name);
+    void artnetSetup(string _ip,short _fps,int _totalChannels,string _name);
     void artnetUpdate(ofColor _color,int _pos,int length, int effectS, int effectI, int effectIndex);
     void artnetDraw(int _xpos, int _ypos );
 	void artnetClearBuffer();
@@ -44,16 +44,17 @@ public:
     void EffectFlash(int& _xpos, int& _lenght, int effectS, int effectI);
 	void EffectFlashInverted(int& _xpos, int& _lenght, int effectS, int effectI,ofColor& _col);
     void EffectRandomSparkle(int& _xpos, int& _lenght, int effectS, int effectI);
-    void EffectBlackout(ofColor& _col);
-
     void EffectSimpleSine(int& _xpos, int& _lenght, int effectS, int effectI, ofColor& _col);
-
-    int CreateTimer(int triggerTime,int cycleLimiter,bool consoleTimer);
-    int CreateSineWave(int sMin,int sinMax,bool consoleTimer);
+    void EffectPerlinNoise(int effectS, int effectI);
+    void SendThreadSleep();
+    
+    
+    int CreateTimer(int triggerTime,int cycleLimiter,bool consoleTimer=false);
+    int CreateSineWave(int sMin,int sinMax,bool consoleTimer=false);
     int CreateFMOD(int max);
     int fm;
     int sw;
-	int artnetPerlinNoise(int max);
+	float artnetPerlinNoise(float max);
 
 
 };

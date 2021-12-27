@@ -15,6 +15,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+		
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -53,8 +54,8 @@ class ofApp : public ofBaseApp{
         ofParameter<int>channelStart;
         ofParameter<int>channelLength;     
 	
-		ofParameter<float>effectIn;
-		ofParameter<float>effectSpeed;
+		ofParameter<int>effectIn;
+		ofParameter<int>effectSpeed;
 		ofParameter<float>effectIndex;
 
 		ofParameterGroup parLenStart;
@@ -67,12 +68,12 @@ class ofApp : public ofBaseApp{
 		float currEffectIndex = 0;
 		void effectIndexChanged(float&);
 		//
-		static const unsigned int effectPresetsLenght = 7;
-		string effectPresetsNames[effectPresetsLenght] = {"Solid","RunUP::DOWN","Unfolding","Flash Black","Random Sparkle","Sinewave","Flash Inverted"};
+		static const unsigned int effectPresetsLenght = 8;
+		string effectPresetsNames[effectPresetsLenght] = {"Solid","RunUP::DOWN","Unfolding","Flash Black","Random Sparkle","Sinewave","Flash Inverted","Perlin Noise"};
 		//
 		ofParameter<ofColor> colorPicker;
-
 		ofxPanel mainControls;
+		ofxLabel test;
         //<-GUI
 
         //->Artnet
@@ -80,10 +81,11 @@ class ofApp : public ofBaseApp{
         std::vector<std::string>  nodesIP;
         vector<int> nodesMaxLen;
 		ofColor currCol;
-        bool foundNodes;
         //<-Artnet
 
         //Read CSV
+		void csvScanCSV();
+        bool foundNodes;
 		const string csvPath = "nodes.csv";
         ofxCsv csv;
         unsigned int csvRows;

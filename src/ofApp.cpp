@@ -1,12 +1,9 @@
 /*
 WINDOWS BRANCH 
-TODO !!!
-+ the lenght is given twice to the class
-+ Fix OFLog
 */
 #include "ofApp.h"
 //GENERAL
-#define GLOBALFRAMERATE 60
+#define GLOBALFRAMERATE 40
 #define BRANCH_TYPE "WINDOWS"
 #define PROJECT_NAME "WELOSA"
 #define VERSION_NUMBER "0.0.6"
@@ -28,27 +25,8 @@ void ofApp::setup(){
 
 scanXMLPresets();
 ofSetLogLevel(OF_LOG_NOTICE);
+csvScanCSV();
 
-if(csv.load(ofToDataPath(csvPath)))
-{
-foundNodes=true;
-csvRows=csv.getNumRows();
-artnetNodes.resize(csvRows);
-//ofLogNotice("CSV-File found with "+ofToString(csvRows)+"nodes!");
-
-for(int i = 0; i < csvRows; i++) 
-{
-	
-		   nodesDesc.push_back(csv[i][0]);
-		   nodesIP.push_back(csv[i][1]);
-		   nodesMaxLen.push_back(ofToInt((csv[i][2])));
-}
-
-}
- else
-{
-	//ofLogNotice( "File not found ");
-}
 
 	ofSetFrameRate(GLOBALFRAMERATE);
 	ofSetVerticalSync(ENABLE_VSYNC);
@@ -67,10 +45,11 @@ for(int i = 0; i < csvRows; i++)
 	channelLength.setParent(parLenStart);
 	*/
 
-	parameters.add(parColors);		
-	parColors.setName("Color Control");	
+
 
 #if defined(COLOR_CONTROLL_SLIDER)
+	parameters.add(parColors);
+	parColors.setName("Color Control");
 	colorR.setParent(parColors);
 	parameters.add(colorR.set("colorR", 255, 0, 255));
 	parameters.add(colorG.set("colorG",0,0,255));
@@ -81,7 +60,8 @@ for(int i = 0; i < csvRows; i++)
 	colorA.setParent(parColors);
 #elif defined (COLOR_CONTROLL_PICKER)
 	parameters.add(colorPicker.set("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255)));
-	
+	colorPicker.setName("Color Picker");
+		
 #endif
 
 	parameters.add(parEffects);
@@ -101,7 +81,12 @@ for(int i = 0; i < csvRows; i++)
 	font.load(OF_TTF_SANS, 9, true, true);
 	mainControls.setUseTTF(TTF_FONT);
 	mainControls.setTextColor(ofColor::white);
-	
+	mainControls.setDefaultHeight(20);
+	mainControls.setBorderColor(50);
+	mainControls.setFillColor(ofColor(24));
+	mainControls.setTextColor(ofColor::antiqueWhite);
+	mainControls.setHeaderBackgroundColor(ofColor::blueSteel);
+	mainControls.maximizeAll();
 	mainControls.setup(parameters);
 	
 	// by now needs to pass the gui parameter groups since the panel internally creates it's own group
@@ -131,6 +116,7 @@ void ofApp::update(){
 	currCol.g = (int)colorG;
 	currCol.b = (int)colorB;
 	currCol.a = (int)colorA;
+
 #elif defined (COLOR_CONTROLL_PICKER)
 	currCol = colorPicker;
 #endif
@@ -186,15 +172,42 @@ void ofApp::effectIndexChanged(float&index)
 	}	
 }
 
+void ofApp::csvScanCSV()
+{
+	if (csv.load(ofToDataPath(csvPath)))
+	{
+		
+		if (csv.getNumRows() != 0)
+		{
+			foundNodes = true;
+			csvRows = csv.getNumRows();
+			artnetNodes.resize(csvRows);
+
+			for (int i = 0; i < csv.getNumRows(); i++)
+			{
+				nodesDesc.push_back(csv[i][0]);
+				nodesIP.push_back(csv[i][1]);
+				nodesMaxLen.push_back(ofToInt((csv[i][2])));
+			}
+		}
+		else
+		{
+			foundNodes = false;
+		}
+	}
+	
+}
+
 void ofApp::showHints()
 {	
 	ofPushStyle();
 	ofSetColor(ofColor::green);		
-		ofDrawBitmapString("Show Session Information :: i ", 10, 420);
-		ofDrawBitmapString("Save Presets (.xml) file :: s ", 10, 440);
-		ofDrawBitmapString("Load Presets (.xml) file :: o ", 10, 460);
-		ofDrawBitmapString("Toogle between Effects :: <- and ->", 10, 480);
-		ofDrawBitmapString("PANIC BUTTON :: ESC ", 10, 500);
+	int startY = 500;
+		ofDrawBitmapString("Show Session Information :: i ", 10, startY);
+		ofDrawBitmapString("Save Presets (.xml) file :: s ", 10, startY +20);
+		ofDrawBitmapString("Load Presets (.xml) file :: o ", 10, startY+40);
+		ofDrawBitmapString("Toogle between Effects :: <- and ->", 10, startY+60);
+		ofDrawBitmapString("PANIC BUTTON :: ESC ", 10, startY+80);
 		ofPopStyle();
 }
 
@@ -253,23 +266,26 @@ void ofApp::XMLPresetsDraw()
 
 	if (foundXMLFiles)
 	{
+		ofPushStyle();
+		ofSetColor(ofColor::blue);
 		string curPresDesc = "Curr Preset : " + xmlPresetList[currentXMLPreset];
 		int lastyPos=0;
 		int counter;
 		
-			ofDrawBitmapStringHighlight("Xml-Presets", 800, 80, ofColor::blue, ofColor::wheat);
+			ofDrawBitmapStringHighlight("Xml-Presets", ofGetWidth() - 150, 80, ofColor::blue, ofColor::wheat);
 		for (int i = 0; i < xmlPresetList.size(); i++)
 		{
 			counter = i + 1;
-			ofDrawBitmapString(ofToString(counter) + " : " + xmlPresetList[i], 800, 100 + i * 30);
+			ofDrawBitmapString(ofToString(counter) + " : " + xmlPresetList[i], ofGetWidth()-150, 100 + i * 30);
 			lastyPos = 100 + i * 30;
 		}
 
 		if (isXMLSelected)
 		{
-			ofDrawBitmapStringHighlight(curPresDesc, 800, lastyPos+30, ofColor::red, ofColor::wheat);
+			ofDrawBitmapStringHighlight(curPresDesc, ofGetWidth() - 150, lastyPos+30, ofColor::red, ofColor::wheat);
 		}
 
+		ofPopStyle();
 	}
 
 }
@@ -337,13 +353,11 @@ void ofApp::keyPressed(int key)
 	
 	if (key == 's')
 	{
-		string tmpFN;
-		std::string h = "save.xml";
-		fDSavePreset = ofSystemSaveDialog(h, h);
+		
+		fDSavePreset = ofSystemSaveDialog("test.xml", "Vice versa");
 		if (checkFilePropSave(fDSavePreset))
-		{
-			tmpFN = fDSavePreset.getName();		
-			mainControls.saveToFile(tmpFN);
+		{		
+			mainControls.saveToFile(fDSavePreset.getName());
 			scanXMLPresets();
 		}
 	
@@ -450,6 +464,10 @@ void ofApp::gotMessage(ofMessage msg){
 
 void ofApp::exit()
 {
+	for (int i = 0; i < csvRows; i++)
+	{
+		artnetNodes[i].artnetClearBuffer();
+	}
 	mainControls.clear();
 }
 
