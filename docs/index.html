@@ -75,6 +75,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#future-development">Future development</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#screenshots">Screenshots</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#supported-software-via-touch-osc">Supported software via Touch-OSC</a>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -123,7 +127,7 @@ You can use the software  to send data via Artnet to your device.
 Additionally you can controll the Software via OSC.
 Examples are provided.</p>
 <hr />
-<h2 id="_1"><img alt="alt text" src="diagramm.PNG" /></h2>
+<h2 id="_1"><img alt="flow chart" src="diagramm.PNG" /></h2>
 <h2 id="getting-started">Getting Started</h2>
 <h3 id="dependencies">Dependencies</h3>
 <ul>
@@ -181,27 +185,33 @@ DMX mode: Multi RGB
 <tbody>
 <tr>
 <td>Color-Red:</td>
-<td align="center">left-aligned</td>
+<td align="center">/colorR</td>
+<td align="right">float</td>
+<td align="right">0-255</td>
+</tr>
+<tr>
+<td>Color-Green:</td>
+<td align="center">/colorG</td>
 <td align="right">float</td>
 <td align="right">0-255</td>
 </tr>
 <tr>
 <td>Color-Red:</td>
-<td align="center">centered</td>
+<td align="center">/colorR</td>
 <td align="right">float</td>
 <td align="right">0-255</td>
 </tr>
 <tr>
-<td>Color-Red:</td>
-<td align="center">right-aligned</td>
+<td>Color-Brightness (Alpha)</td>
+<td align="center">/colorA</td>
 <td align="right">float</td>
 <td align="right">0-255</td>
 </tr>
 <tr>
-<td>Color-Brightness</td>
-<td align="center">right-aligned</td>
+<td>Change effects</td>
+<td align="center">/effectIndex</td>
 <td align="right">float</td>
-<td align="right">0-255</td>
+<td align="right">0-8</td>
 </tr>
 </tbody>
 </table>
@@ -228,6 +238,12 @@ DMX mode: Multi RGB
 <li>Audio-Visual Effects </li>
 <li>Effect browser for custom effects </li>
 <li>Linux support(almost there 🥳)</li>
+</ul>
+<h2 id="screenshots">Screenshots</h2>
+<p><img alt="flow chart" src="screen1.PNG" /></p>
+<h2 id="supported-software-via-touch-osc">Supported software via Touch-OSC</h2>
+<ul>
+<li>see the /templates folder for examples</li>
 </ul>
               
             </div>
@@ -274,5 +290,5 @@ DMX mode: Multi RGB
 
 <!--
 MkDocs version : 1.2.2
-Build Date UTC : 2021-09-08 18:09:59.163914+00:00
+Build Date UTC : 2021-12-27 15:07:58.388915+00:00
 -->
